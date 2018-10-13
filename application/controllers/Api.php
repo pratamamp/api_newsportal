@@ -20,12 +20,36 @@ class Api extends REST_Controller {
 	}
 
 	function topic_get() {
-		$resdata = $this->db->get('topic')->result_array();
-		$this->get_response($resdata);
+		$id = $this->get('id');
+		if($id === NULL){
+			$resdata = $this->db->get('topic')->result_array();
+			if($resdata) {
+				$response_code = REST_Controller::HTTP_OK;
+            	$result = array('status'=>'success', 'display_message'=>'Get data topic', 'data'=>$resdata, 'time'=>date('Y-m-d H:i:s'));
+			}else {
+				$response_code = REST_Controller::HTTP_NOT_FOUND;
+            	$result = array('status'=>'failed', 'display_message'=>'There is no data were found', 'time'=>date('Y-m-d H:i:s'));
+			}
+		}else {
+			$id = (int) $id;
+			if ($id <= 0) {
+				$response_code = REST_Controller::HTTP_BAD_REQUEST; // BAD_REQUEST (400) being the HTTP response code
+				$result = array('status'=>'failed', 'display_message'=>'Invalid id', 'time'=>date('Y-m-d H:i:s'));
+			}else {
+				
+				$this->db->where('topic_id', $id);
+				$resdata = $this->db->get('topic')->result();
+				
+	            $response_code = REST_Controller::HTTP_OK;
+	            $result = array('status'=>'success', 'display_message'=>'Get data topic', 'data'=>$resdata, 'time'=>date('Y-m-d H:i:s'));
+				
+			}
+		}
+		$this->set_response($result, $response_code);
 	}
 
 	function topic_post() {
-		$title = ($this->input->get_post('title'))? $this->input->get_post('title') : '';
+		$title = ($this->input->get_post('topic_title'))? $this->input->get_post('topic_title') : '';
 		$insert = $this->db->insert('topic', ['topic_title'=>$title, 'topic_slug'=>format_uri($title)]);  
 		if($insert) {
 			$response_code = REST_Controller::HTTP_CREATED;
@@ -39,27 +63,99 @@ class Api extends REST_Controller {
 
 
 	function news_get() {
-		$newsdata = $this->db->get('news')->result_array();
-		$this->get_response($newsdata);
+		$id = $this->get('id');
+		if($id === NULL){
+			$newsdata = $this->db->get('news')->result_array();
+			if($newsdata) {
+				$response_code = REST_Controller::HTTP_OK;
+            	$result = array('status'=>'success', 'display_message'=>'Get data', 'data'=>$newsdata, 'time'=>date('Y-m-d H:i:s'));
+			}else {
+				$response_code = REST_Controller::HTTP_NOT_FOUND;
+            	$result = array('status'=>'failed', 'display_message'=>'There is no data were found', 'time'=>date('Y-m-d H:i:s'));
+			}
+		}else {
+			// if id is numeric then search by id whether by topic
+			if(is_numeric($id)) {
+				$id = (int) $id;
+				if ($id <= 0) {
+					$response_code = REST_Controller::HTTP_BAD_REQUEST; // BAD_REQUEST (400) being the HTTP response code
+					$result = array('status'=>'failed', 'display_message'=>'Invalid id', 'time'=>date('Y-m-d H:i:s'));
+				}else {
+					$this->db->where('news_id', $id);
+					$newsdata = $this->db->get('news')->result_array();
+		            $response_code = REST_Controller::HTTP_OK;
+		            $result = array('status'=>'success', 'display_message'=>'Get data topic', 'data'=>$newsdata, 'time'=>date('Y-m-d H:i:s'));
+				}
+			}else {
+				// get topic id
+				$this->db->where('topic_slug',strtolower(format_uri($id)));
+				$topic = $this->db->get('topic');
+				if($topic->num_rows() > 0){
+					$topicId = $topic->row_array()['topic_id'];
+					// search where topic id 
+					$this->db->where('topic_id', $topicId);
+					$get = $this->db->select('*')
+							 ->from('news_topic t')
+							 ->join('news n', 'n.news_id = t.news_id')
+							 ->get();
+					$news = $get->result_array();
+					$get->free_result();
+					$response_code = REST_Controller::HTTP_OK;
+		            $result = array('status'=>'success', 'display_message'=>'Get data topic', 'data'=>$news, 'time'=>date('Y-m-d H:i:s'));
+				}else {
+					$response_code = REST_Controller::HTTP_NOT_FOUND;
+            		$result = array('status'=>'failed', 'display_message'=>'There is no data were found', 'time'=>date('Y-m-d H:i:s'));
+				}
+
+			}
+			
+		}
+		$this->set_response($result, $response_code);
 	}
 
 	function news_post() {
 		$title = ($this->input->get_post('title')) ? $this->input->get_post('title') : '';
 		$summary = ($this->input->get_post('summary')) ? $this->input->get_post('summary') : '';
 		$content = ($this->input->get_post('content')) ? $this->input->get_post('content') : '';
+		$topic  = ($this->input->get_post('topics')) ? $this->input->get_post('topics') : '';
 		$status = ($this->input->get_post('status')) ? $this->input->get_post('status') : '';
 		$published = ($this->input->get_post('published_date')) ? $this->input->get_post('published_date'): '';
 		$data = array('news_date_published'=>$published,
 					  'news_date_created'=>date('Y-m-d H:i:s'),
 					  'news_date_modified'=>date('Y-m-d H:i:s'),
 					  'news_title'=>strip_tags(trim($title)),
+					  'news_topic'=>trim($topic),
 					  'news_slug'=>format_uri($title),
 					  'news_summary'=>htmlentities(trim($summary)),
 					  'news_content'=>trim($content),
 					  'news_status'=>$status
 						);
+		// check existed topic
+		
 		$insert = $this->db->insert('news', $data);
 		if($insert) {
+			$idNews = $this->db->insert_id();
+			// Topics
+			if(isset($topic)) {
+				$topicList = explode(',' ,$topic);
+				foreach ($topicList as $topicItem) {
+					// check if topic existed
+					$this->db->where('topic_slug', strtolower(format_uri($topicItem)));
+					$existed = $this->db->get('topic')->row_array();
+					if(!$existed) {
+						// add new topic
+						$topicData = array('topic_title'=>$topicItem, 'topic_slug'=>format_uri($topicItem), 'topic_count'=>1);
+						$newTopic = $this->db->insert('topic', $topicData);
+						$id = $this->db->insert_id();
+						if($insert) $this->add_news_topic($idNews, $id);
+					}else {
+						$this->add_news_topic($idNews, $existed['topic_id']);
+						// update counter topic
+						$this->add_counter_topic($existed['topic_id']);
+						
+					}
+				}
+			}
 			$response_code = REST_Controller::HTTP_CREATED;
 			$result = array('status'=>'success', 'display_message'=>'Data Added!', 'time'=>date('Y-m-d H:i:s'));
 		}else {
@@ -67,40 +163,22 @@ class Api extends REST_Controller {
 			$result = array('status'=>'failed', 'display_message'=>'Error added data', 'time'=>date('Y-m-d H:i:s'));
 		}
 
+		$this->set_response($result, $response_code);
+
 	}
 
-	function get_response($data) {
-		$id = $this->get('id');
-		if($id === NULL){
-			if($data) {
-				$response_code = REST_Controller::HTTP_OK;
-            	$result = array('status'=>'success', 'display_message'=>'Get data topic', 'data'=>$data, 'time'=>date('Y-m-d H:i:s'));
-			}else {
-				$response_code = REST_Controller::HTTP_NOT_FOUND;
-            	$result = array('status'=>'failed', 'display_message'=>'There is no data were found', 'time'=>date('Y-m-d H:i:s'));
-			}
-		}else {
-			$id = (int) $id;
-			if ($id <= 0) {
-				$response_code = REST_Controller::HTTP_BAD_REQUEST; // BAD_REQUEST (400) being the HTTP response code
-				$result = array('status'=>'failed', 'display_message'=>'Invalid id', 'time'=>date('Y-m-d H:i:s'));
-			}else {
-				if(!empty($data)) {
-					$item = NULL;
+	private function add_news_topic($newsid, $topicid) {
+		$this->db->escape_str($newsid);
+		$this->db->escape_str($topicid);
+		$this->db->insert('news_topic', array('news_id'=>$newsid, 'topic_id'=>$topicid));
+		return $this->db->insert_id();
+	}
 
-					foreach ($data as $key => $value) {
-						if(isset($value['topic_id']) && $value['topic_id'] == $id){
-							$item = $value;
-						}
-					}
-
-		            $response_code = REST_Controller::HTTP_OK;
-		            $result = array('status'=>'success', 'display_message'=>'Get data topic', 'data'=>$item, 'time'=>date('Y-m-d H:i:s'));
-				}
-			}
-		}
-
-		$this->set_response($result, $response_code);
+	private function add_counter_topic($id) {
+		$this->db->set('topic_count', 'topic_count+1', FALSE);
+		$this->db->where('topic_id', $id);
+		$this->db->update('topic');
+		
 	}
 
 
