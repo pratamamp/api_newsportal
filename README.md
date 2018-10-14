@@ -38,9 +38,9 @@ Arguments
 id will be present by topic id
 
 Example
-	* /api/topic
-	* /api/topic/1
-	* /api/topic/10
+* /api/topic
+* /api/topic/1
+* /api/topic/10
 
 
 #### Edit Topic
@@ -52,8 +52,8 @@ key list on body of the form presented available field to edit
 	title
 
 Example
-	* /api/topic/1
-	* /api/topic/10
+* /api/topic/1
+* /api/topic/10
 
 
 #### Delete Topic
@@ -64,8 +64,8 @@ Arguments
 id will be presented by topic id
 
 Example
-	* /api/topic/1
-	* /api/topic/10
+* /api/topic/1
+* /api/topic/10
 
 
 #### Get News
@@ -77,9 +77,9 @@ Arguments
 id  will be present by news id
 
 Example
-	* /api/news
-	* /api/news/1
-	* /api/news/10
+* /api/news
+* /api/news/1
+* /api/news/10
 
 
 #### Get News by Topic
@@ -90,9 +90,9 @@ Arguments
 topic will be presented by topic title
 
 Example
-	* /api/news/teknologi
-	* /api/news/sports
-	* /api/news/politik
+* /api/news/teknologi
+* /api/news/sports
+* /api/news/politik
 
 
 #### Add Topic
@@ -110,13 +110,14 @@ there is 'topic_title' key available on body form
 ```
 Arguments
 stat will be presented by selected status
-	* draft
-	* published
-	* deleted
-	* edited
+* draft
+* published
+* deleted
+* edited
+
 Example
-	* /api/news/status/draft
-	* /api/news/status/published
+* /api/news/status/draft
+* /api/news/status/published
 
 
 
