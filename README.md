@@ -162,8 +162,6 @@ Arguments
 id will presented from news_id
 
 
-
-
 ## Authors
 
 * **Meyliana Pratama**
