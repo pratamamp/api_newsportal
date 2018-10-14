@@ -1,0 +1,191 @@
+{
+	"info": {
+		"_postman_id": "b0a26462-f2fa-47f3-b25a-47c3e7c1b545",
+		"name": "assesment-kumparan",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get Topic",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{localhost}}{{sitename}}/api/topic/3",
+					"host": [
+						"{{localhost}}{{sitename}}"
+					],
+					"path": [
+						"api",
+						"topic",
+						"3"
+					]
+				},
+				"description": "get topic data"
+			},
+			"response": []
+		},
+		{
+			"name": "Add Topic",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "topic_title",
+							"value": "Teknologi",
+							"description": "Title Name",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{localhost}}{{sitename}}/api/topic",
+					"host": [
+						"{{localhost}}{{sitename}}"
+					],
+					"path": [
+						"api",
+						"topic"
+					]
+				},
+				"description": "Added,Edit Topic"
+			},
+			"response": []
+		},
+		{
+			"name": "Get News",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{localhost}}{{sitename}}/api/news",
+					"host": [
+						"{{localhost}}{{sitename}}"
+					],
+					"path": [
+						"api",
+						"news"
+					]
+				},
+				"description": "Get News content"
+			},
+			"response": []
+		},
+		{
+			"name": "Add News",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "title",
+							"value": "Jerman Menguasai Permainan, tetapi Belanda Meraih Kemenangan Telak",
+							"type": "text"
+						},
+						{
+							"key": "topics",
+							"value": "Sepak Bola,Sports,Timnas Belanda",
+							"description": "add topic with \",\" char for multiple topic",
+							"type": "text"
+						},
+						{
+							"key": "summary",
+							"value": "Status tuan rumah dimanfaatkan dengan sebaik-baiknya oleh Timnas Belanda. Menjamu Jerman dalam laga kedua Grup A UEFA Nations League di Johan Cruijff Arena, Minggu (14/10/2018) dini hari WIB, Oranje menang telak 3-0.",
+							"type": "text"
+						},
+						{
+							"key": "content",
+							"value": "Status tuan rumah dimanfaatkan dengan sebaik-baiknya oleh Timnas Belanda. Menjamu Jerman dalam laga kedua Grup A UEFA Nations League di Johan Cruijff Arena, Minggu (14/10/2018) dini hari WIB, Oranje menang telak 3-0.\nTrigol Belanda dalam laga ini dicetak oleh Virgil van Dijk menit ke-30, Memphis Depay (87'), dan Georginio Wijnaldum (90). Atas hasil ini, Belanda naik setrip ke posisi 2 berbekal 3 poin. Sedangkan, Jerman terbenam di dasar klasemen dengan koleksi 1 angka. ",
+							"type": "text"
+						},
+						{
+							"key": "status",
+							"value": "draft",
+							"description": "status (draft,publish,deleted,edited)",
+							"type": "text"
+						},
+						{
+							"key": "published_date",
+							"value": "2018-10-13",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{localhost}}{{sitename}}/api/news",
+					"host": [
+						"{{localhost}}{{sitename}}"
+					],
+					"path": [
+						"api",
+						"news"
+					]
+				},
+				"description": "Create new post"
+			},
+			"response": []
+		},
+		{
+			"name": "Edit News",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "title",
+							"value": "Ini berita editan",
+							"type": "text"
+						},
+						{
+							"key": "summary",
+							"value": "test summary",
+							"type": "text"
+						},
+						{
+							"key": "content",
+							"value": "asdfsadfsadf",
+							"type": "text"
+						},
+						{
+							"key": "status",
+							"value": "draft",
+							"type": "text"
+						},
+						{
+							"key": "published_date",
+							"value": "2018-10-15",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{localhost}}{{sitename}}/api/news/1",
+					"host": [
+						"{{localhost}}{{sitename}}"
+					],
+					"path": [
+						"api",
+						"news",
+						"1"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

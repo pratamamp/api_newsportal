@@ -64,6 +64,7 @@ class Api extends REST_Controller {
 
 	function news_get() {
 		$id = $this->get('id');
+		$status = $this->get('status');
 		if($id === NULL){
 			$newsdata = $this->db->get('news')->result_array();
 			if($newsdata) {
@@ -76,7 +77,7 @@ class Api extends REST_Controller {
 		}else {
 			// if id is numeric then search by id whether by topic
 			if(is_numeric($id)) {
-				$id = (int) $id;
+				// $id = (int) $id;
 				if ($id <= 0) {
 					$response_code = REST_Controller::HTTP_BAD_REQUEST; // BAD_REQUEST (400) being the HTTP response code
 					$result = array('status'=>'failed', 'display_message'=>'Invalid id', 'time'=>date('Y-m-d H:i:s'));
@@ -109,6 +110,18 @@ class Api extends REST_Controller {
 
 			}
 			
+		}
+
+		if(isset($status)) {
+			$this->db->where('news_status', $status);
+			$sortBystatus = $this->db->get('news');
+			if($sortBystatus->num_rows() > 0) {
+				$response_code = REST_Controller::HTTP_OK;
+		        $result = array('status'=>'success', 'display_message'=>'Get data topic', 'data'=>$sortBystatus->result_array(), 'time'=>date('Y-m-d H:i:s'));
+			}else {
+				$response_code = REST_Controller::HTTP_NOT_FOUND;
+            	$result = array('status'=>'failed', 'display_message'=>'There is no data were found', 'time'=>date('Y-m-d H:i:s'));
+			}
 		}
 		$this->set_response($result, $response_code);
 	}
@@ -165,6 +178,63 @@ class Api extends REST_Controller {
 
 		$this->set_response($result, $response_code);
 
+	}
+
+	function news_put() {
+		$title = ($this->put('title')) ? $this->put('title') : '';
+		$summary = ($this->put('summary')) ? $this->put('summary') : '';
+		$content = ($this->put('content')) ? $this->put('content') : '';
+		// $topic  = ($this->input->get_post('topics')) ? $this->input->get_post('topics') : '';
+		$status = ($this->put('status')) ? $this->put('status') : '';
+		$published = ($this->put('published_date')) ? $this->put('published_date'): '';
+		$data = array('news_date_published'=>$published,
+					  'news_date_modified'=>date('Y-m-d H:i:s'),
+					  'news_title'=>strip_tags(trim($title)),
+					  'news_slug'=>format_uri($title),
+					  'news_summary'=>htmlentities(trim($summary)),
+					  'news_content'=>trim($content),
+					  'news_status'=>$status
+						);
+		$id = ($this->get('id')) ? $this->get('id') : '';
+
+		if($id > 0){
+			$this->db->where('news_id', $id);
+			$update = $this->db->update('news', $data);
+			
+			if($update) {
+				$response_code = REST_Controller::HTTP_CREATED;
+				$result = array('status'=>'success', 'display_message'=>'Data Modified!', 'time'=>date('Y-m-d H:i:s'));
+			}else {
+				$response_code = REST_Controller::HTTP_NOT_MODIFIED;
+				$result = array('status'=>'failed', 'display_message'=>'Error modified data', 'time'=>date('Y-m-d H:i:s'));
+			}
+		}else {
+			$response_code = REST_Controller::HTTP_BAD_REQUEST; // BAD_REQUEST (400) being the HTTP response code
+			$result = array('status'=>'failed', 'display_message'=>'Invalid id', 'time'=>date('Y-m-d H:i:s'));
+		}
+
+		$this->set_response($result, $response_code);
+	}
+
+	function news_delete() {
+		$id = $this->get('id');
+		if($id <=0) {
+			$response_code = REST_Controller::HTTP_BAD_REQUEST; // BAD_REQUEST (400) being the HTTP response code
+			$result = array('status'=>'failed', 'display_message'=>'Invalid id', 'time'=>date('Y-m-d H:i:s'));
+		}else {
+			$data = array('news_status'=>'deleted');
+			$this->db->where('news_id', $id);
+			$deleted = $this->db->update('news', $data);
+			if($deleted) {
+				$response_code = REST_Controller::HTTP_CREATED;
+				$result = array('status'=>'success', 'display_message'=>'Data Deleted!', 'time'=>date('Y-m-d H:i:s'));
+			}else {
+				$response_code = REST_Controller::HTTP_NOT_MODIFIED;
+				$result = array('status'=>'failed', 'display_message'=>'Error modified data', 'time'=>date('Y-m-d H:i:s'));
+			}
+		}
+
+		$this->set_response($result, $response_code);
 	}
 
 	private function add_news_topic($newsid, $topicid) {

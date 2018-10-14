@@ -26,6 +26,50 @@ install to local repository and create database name db_portal and import all qu
 * [Codeigniter 3.1.9](https://www.codeigniter.com/)
 * [Rest Server](https://github.com/chriskacerguis/codeigniter-restserver)
 
+## End Point Listed
+
+* Get Topic
+```
+/api/topic/
+/api/topic/(id)
+```
+Arguments
+id   will be present by topic id
+
+Example
+* /api/topic
+* /api/topic/1
+* /api/topic/10
+
+
+* Get News
+```
+/api/news/
+/api/news/(id)
+```
+Arguments
+id  will be present by news id
+
+Example
+* /api/news
+* /api/news/1
+* /api/news/10
+
+
+* Get News by Topic
+```
+/api/news/(topic)
+```
+Arguments
+topic will be presented by topic title
+
+Example
+* /api/news/teknologi
+* /api/news/sports
+* /api/news/politik
+
+
+
 ## Authors
 
 * **Meyliana Pratama**
