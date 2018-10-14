@@ -28,7 +28,7 @@ install to local repository and create database name db_portal and import all qu
 
 ## End Point Listed
 
-* Get Topic
+### * Get Topic
 ```
 /api/topic/
 /api/topic/(id)
@@ -42,7 +42,7 @@ Example
 * /api/topic/10
 
 
-* Get News
+### * Get News
 ```
 /api/news/
 /api/news/(id)
@@ -56,7 +56,7 @@ Example
 * /api/news/10
 
 
-* Get News by Topic
+### * Get News by Topic
 ```
 /api/news/(topic)
 ```
