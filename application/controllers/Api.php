@@ -61,6 +61,46 @@ class Api extends REST_Controller {
 		$this->set_response($result, $response_code);
 	}
 
+	function topic_put() {
+		$title = ($this->put('title')) ? $this->put('title') : '';
+		$id = $this->get('id');
+		if($id <=0) {
+			$response_code = REST_Controller::HTTP_BAD_REQUEST; // BAD_REQUEST (400) being the HTTP response code
+			$result = array('status'=>'failed', 'display_message'=>'Invalid id', 'time'=>date('Y-m-d H:i:s'));
+		}else {
+			$data = array('topic_title'=>$title, 'topic_slug'=>format_uri($title));
+			$this->db->where('topic_id', $id);
+			$update = $this->db->update('topic',$data);
+			if($update) {
+				$response_code = REST_Controller::HTTP_CREATED;
+				$result = array('status'=>'success', 'display_message'=>'Data Modified!', 'time'=>date('Y-m-d H:i:s'));
+			}else {
+				$response_code = REST_Controller::HTTP_NOT_MODIFIED;
+				$result = array('status'=>'failed', 'display_message'=>'Error modified data', 'time'=>date('Y-m-d H:i:s'));
+			}
+		}
+		$this->set_response($result, $response_code);
+	}
+
+	function topic_delete() {
+		$id = $this->get('id');
+		if($id <=0) {
+			$response_code = REST_Controller::HTTP_BAD_REQUEST; // BAD_REQUEST (400) being the HTTP response code
+			$result = array('status'=>'failed', 'display_message'=>'Invalid id', 'time'=>date('Y-m-d H:i:s'));
+		}else {
+			$this->db->where('topic_id',$id);
+			$deleted = $this->db->delete('topic');
+			if($deleted) {
+				$response_code = REST_Controller::HTTP_OK;
+				$result = array('status'=>'success', 'display_message'=>'Data Deleted!', 'time'=>date('Y-m-d H:i:s'));
+			}else {
+				$response_code = REST_Controller::HTTP_NOT_MODIFIED;
+				$result = array('status'=>'failed', 'display_message'=>'Error delete data', 'time'=>date('Y-m-d H:i:s'));
+			}
+		}
+		$this->set_response($result, $response_code);
+	}
+
 
 	function news_get() {
 		$id = $this->get('id');

@@ -15,14 +15,14 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": "{{localhost}}{{sitename}}/api/topic/3",
+					"raw": "{{localhost}}{{sitename}}/api/topic/",
 					"host": [
 						"{{localhost}}{{sitename}}"
 					],
 					"path": [
 						"api",
 						"topic",
-						"3"
+						""
 					]
 				},
 				"description": "get topic data"
@@ -69,13 +69,14 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": "{{localhost}}{{sitename}}/api/news",
+					"raw": "{{localhost}}{{sitename}}/api/news/1",
 					"host": [
 						"{{localhost}}{{sitename}}"
 					],
 					"path": [
 						"api",
-						"news"
+						"news",
+						"1"
 					]
 				},
 				"description": "Get News content"
@@ -142,7 +143,14 @@
 			"name": "Edit News",
 			"request": {
 				"method": "PUT",
-				"header": [],
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"type": "text"
+					}
+				],
 				"body": {
 					"mode": "urlencoded",
 					"urlencoded": [
@@ -168,7 +176,7 @@
 						},
 						{
 							"key": "published_date",
-							"value": "2018-10-15",
+							"value": "2018-10-15 03:54",
 							"type": "text"
 						}
 					]
@@ -182,6 +190,88 @@
 						"api",
 						"news",
 						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete News",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{localhost}}{{sitename}}/api/news/1",
+					"host": [
+						"{{localhost}}{{sitename}}"
+					],
+					"path": [
+						"api",
+						"news",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Edit Topic",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "title",
+							"value": "Otomotif",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{localhost}}{{sitename}}/api/topic/1",
+					"host": [
+						"{{localhost}}{{sitename}}"
+					],
+					"path": [
+						"api",
+						"topic",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Topic",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{localhost}}{{sitename}}/api/topic/4",
+					"host": [
+						"{{localhost}}{{sitename}}"
+					],
+					"path": [
+						"api",
+						"topic",
+						"4"
 					]
 				}
 			},
